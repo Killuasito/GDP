@@ -197,6 +197,81 @@ const WellDetails = ({ well, onUpdate }) => {
     setCustomFields(newFields);
   };
 
+  const MobileMeasurementRow = ({ measurement, index }) => {
+    const [expanded, setExpanded] = useState(false);
+    
+    return (
+      <div className={`sm:hidden mb-3 border border-gray-300 rounded-lg overflow-hidden shadow-sm transition-all ${expanded ? 'shadow-md' : ''} ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
+        <div 
+          className="flex justify-between items-center p-3 cursor-pointer"
+          onClick={() => setExpanded(!expanded)}
+        >
+          <div>
+            <div className="font-medium text-gray-800">
+              {format(new Date(measurement.timestamp), "dd/MM/yyyy")}
+              <span className="ml-2 text-xs font-normal text-gray-500">
+                {format(new Date(measurement.timestamp), "HH:mm")}
+              </span>
+            </div>
+            <div className="text-xs text-gray-500 mt-1 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              {measurement.measuredBy || 'Sistema'}
+            </div>
+          </div>
+          <div className={`flex items-center transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}>
+            <div className={`rounded-full p-1 bg-blue-50 text-blue-600 transition-colors ${expanded ? 'bg-blue-100' : ''}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expanded ? 'max-h-96' : 'max-h-0'}`}>
+          <div className="p-3 border-t border-gray-300">
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              <div className="bg-blue-50 p-2 rounded-md text-center">
+                <div className="text-xs text-blue-700 font-medium">Nível da Água</div>
+                <div className="font-bold text-blue-600">{measurement.waterLevel} m</div>
+              </div>
+              <div className="bg-green-50 p-2 rounded-md text-center">
+                <div className="text-xs text-green-700 font-medium">Pressão</div>
+                <div className="font-bold text-green-600">{measurement.pressure} PSI</div>
+              </div>
+              <div className="bg-red-50 p-2 rounded-md text-center">
+                <div className="text-xs text-red-700 font-medium">Vazão</div>
+                <div className="font-bold text-red-600">{measurement.flowRate} m³/h</div>
+              </div>
+            </div>
+            
+            {measurement.customMeasurements && measurement.customMeasurements.length > 0 && (
+              <div className="mt-3 bg-purple-50 p-2 rounded-md">
+                <div className="text-xs text-purple-700 font-medium mb-1">Medidas Adicionais</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {measurement.customMeasurements.map((item, idx) => (
+                    <div key={idx} className="text-xs bg-white p-1.5 rounded border border-purple-100">
+                      <span className="text-purple-800 font-medium block">{item.name}</span>
+                      <span className="text-purple-600">{item.value} {item.unit}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {measurement.observations && (
+              <div className="mt-3 bg-gray-50 p-2 rounded-md border border-gray-100">
+                <div className="text-xs text-gray-700 font-medium mb-1">Observações</div>
+                <div className="text-sm text-gray-600 italic">"{measurement.observations}"</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Header with well name and status - modified to remove any add well button */}
@@ -541,7 +616,22 @@ const WellDetails = ({ well, onUpdate }) => {
           <h3 className="text-lg font-semibold mb-4 pb-2 border-b border-gray-200">
             Últimas Medições
           </h3>
-          <div className="overflow-x-auto -mx-6 px-6">
+          
+          {/* Mobile view */}
+          <div className="sm:hidden">
+            {measurements.length > 0 ? (
+              measurements.slice(0, 5).map((measurement, index) => (
+                <MobileMeasurementRow key={index} measurement={measurement} index={index} />
+              ))
+            ) : (
+              <div className="text-center py-4 text-sm text-gray-500">
+                Nenhuma medição registrada.
+              </div>
+            )}
+          </div>
+          
+          {/* Desktop view */}
+          <div className="hidden sm:block overflow-x-auto -mx-6 px-6">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -557,10 +647,10 @@ const WellDetails = ({ well, onUpdate }) => {
                   <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Vazão
                   </th>
-                  <th className="hidden sm:table-cell px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Adicionais
                   </th>
-                  <th className="hidden sm:table-cell px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Observações
                   </th>
                   <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -573,10 +663,7 @@ const WellDetails = ({ well, onUpdate }) => {
                   measurements.slice(0, 5).map((measurement, index) => (
                     <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                       <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
-                        {format(new Date(measurement.timestamp), "dd/MM/yyyy")}
-                        <div className="sm:hidden text-xs text-gray-500">
-                          {format(new Date(measurement.timestamp), "HH:mm")}
-                        </div>
+                        {format(new Date(measurement.timestamp), "dd/MM/yyyy HH:mm")}
                       </td>
                       <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
                         <span className="text-blue-600 font-medium">{measurement.waterLevel} m</span>
@@ -587,7 +674,7 @@ const WellDetails = ({ well, onUpdate }) => {
                       <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
                         <span className="text-red-600 font-medium">{measurement.flowRate} m³/h</span>
                       </td>
-                      <td className="hidden sm:table-cell px-2 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-gray-900">
+                      <td className="px-2 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-gray-900">
                         {measurement.customMeasurements && measurement.customMeasurements.length > 0 ? (
                           <div className="space-y-1">
                             {measurement.customMeasurements.map((item, idx) => (
@@ -600,8 +687,11 @@ const WellDetails = ({ well, onUpdate }) => {
                           "-"
                         )}
                       </td>
-                      <td className="hidden sm:table-cell px-2 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-gray-500 max-w-xs truncate">
+                      <td className="px-2 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-gray-500 max-w-xs truncate">
                         {measurement.observations || "-"}
+                      </td>
+                      <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
+                        {measurement.measuredBy || "-"}
                       </td>
                     </tr>
                   ))
@@ -615,6 +705,7 @@ const WellDetails = ({ well, onUpdate }) => {
               </tbody>
             </table>
           </div>
+          
           {measurements.length > 5 && (
             <div className="mt-4 text-right">
               <button
