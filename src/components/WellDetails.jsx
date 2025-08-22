@@ -233,12 +233,12 @@ const WellDetails = ({ well, onUpdate }) => {
           <div className="p-3 border-t border-gray-300">
             <div className="grid grid-cols-3 gap-2 mb-3">
               <div className="bg-blue-50 p-2 rounded-md text-center">
-                <div className="text-xs text-blue-700 font-medium">Nível da Água</div>
-                <div className="font-bold text-blue-600">{measurement.waterLevel} m</div>
+                <div className="text-xs text-blue-700 font-medium">Hidrômetro</div>
+                <div className="font-bold text-blue-600">{measurement.waterLevel}</div>
               </div>
               <div className="bg-green-50 p-2 rounded-md text-center">
-                <div className="text-xs text-green-700 font-medium">Pressão</div>
-                <div className="font-bold text-green-600">{measurement.pressure} PSI</div>
+                <div className="text-xs text-green-700 font-medium">Horímetro</div>
+                <div className="font-bold text-green-600">{measurement.pressure} H</div>
               </div>
               <div className="bg-red-50 p-2 rounded-md text-center">
                 <div className="text-xs text-red-700 font-medium">Vazão</div>
@@ -343,16 +343,16 @@ const WellDetails = ({ well, onUpdate }) => {
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
               <div className="flex items-center space-x-2 text-blue-700 mb-1">
                 <FaWater className="text-lg" />
-                <span className="font-medium">Nível da Água</span>
+                <span className="font-medium">Hidrômetro</span>
               </div>
-              <div className="text-2xl font-bold">{well.data.waterLevel} m</div>
+              <div className="text-2xl font-bold">{well.data.waterLevel}</div>
             </div>
             <div className="bg-green-50 p-4 rounded-lg border border-green-100">
               <div className="flex items-center space-x-2 text-green-700 mb-1">
                 <FaCompressArrowsAlt className="text-lg" />
-                <span className="font-medium">Pressão</span>
+                <span className="font-medium">Horímetro</span>
               </div>
-              <div className="text-2xl font-bold">{well.data.pressure} PSI</div>
+              <div className="text-2xl font-bold">{well.data.pressure} H</div>
             </div>
             <div className="bg-red-50 p-4 rounded-lg border border-red-100">
               <div className="flex items-center space-x-2 text-red-700 mb-1">
@@ -406,7 +406,7 @@ const WellDetails = ({ well, onUpdate }) => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nível da Água (m)
+                Hidrômetro
               </label>
               <input
                 type="number"
@@ -420,7 +420,7 @@ const WellDetails = ({ well, onUpdate }) => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Pressão (PSI)
+                Horímetro (H)
               </label>
               <input
                 type="number"
@@ -582,7 +582,7 @@ const WellDetails = ({ well, onUpdate }) => {
                   yAxisId="left"
                   type="monotone"
                   dataKey="waterLevel"
-                  name="Nível da Água"
+                  name="Hidrômetro"
                   stroke="#2563eb"
                   strokeWidth={2}
                   dot={{ r: 4 }}
@@ -592,7 +592,7 @@ const WellDetails = ({ well, onUpdate }) => {
                   yAxisId="right"
                   type="monotone"
                   dataKey="pressure"
-                  name="Pressão"
+                  name="Horímetro"
                   stroke="#16a34a"
                   strokeWidth={2}
                   dot={{ r: 4 }}
@@ -639,10 +639,10 @@ const WellDetails = ({ well, onUpdate }) => {
                     Data
                   </th>
                   <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Água
+                    Hidrômetro
                   </th>
                   <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pressão
+                    Horímetro
                   </th>
                   <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Vazão
@@ -666,10 +666,10 @@ const WellDetails = ({ well, onUpdate }) => {
                         {format(new Date(measurement.timestamp), "dd/MM/yyyy HH:mm")}
                       </td>
                       <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
-                        <span className="text-blue-600 font-medium">{measurement.waterLevel} m</span>
+                        <span className="text-blue-600 font-medium">{measurement.waterLevel}</span>
                       </td>
                       <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
-                        <span className="text-green-600 font-medium">{measurement.pressure} PSI</span>
+                        <span className="text-green-600 font-medium">{measurement.pressure} H</span>
                       </td>
                       <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
                         <span className="text-red-600 font-medium">{measurement.flowRate} m³/h</span>
